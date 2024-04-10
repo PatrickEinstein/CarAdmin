@@ -12,7 +12,7 @@ import {
 import { useParams } from "react-router-dom";
 
 export default function Overview() {
-  const product = useParams();
+  const { id: productId } = useParams();
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [model, setModel] = useState("");
@@ -23,7 +23,6 @@ export default function Overview() {
   const [descriptionList, setDescriptionList] = useState([]);
   const [imageFile, setImageFile] = useState(null); // New state for image file
 
-  const productId = product.id;
   useEffect(() => {
     if (productId) {
       fetch(`http://localhost:4000/api/products/${productId}`)
@@ -68,28 +67,60 @@ export default function Overview() {
     setImageFile(file);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newProduct = {
-      name,
-      price,
-      model,
-      location,
-      category,
-      isFeatured,
-      description: descriptionList,
-      imageFile, // Include image file in the new product object
-    };
-    // Reset form fields
-    setName("");
-    setPrice("");
-    setModel("");
-    setLocation("");
-    setCategory("");
-    setIsFeatured(false);
-    setDescription("");
-    setDescriptionList([]);
-    setImageFile(null);
+
+    // Create a new FormData object
+    const formData = new FormData();
+
+    // Append form data
+    formData.append("name", name);
+    formData.append("price", price);
+    formData.append("model", model);
+    formData.append("location", location);
+    formData.append("category", category);
+    formData.append("isFeatured", isFeatured);
+    formData.append("description", JSON.stringify(descriptionList));
+    formData.append("imageFile", imageFile);
+
+    try {
+      // // Make a POST request to your server
+      // const response = await fetch(
+      //   `http://localhost:4000/api/products/${productId ? productId : ""}`,
+      //   {
+      //     method: productId ? "PUT" : "POST",
+      //     body: formData,
+      //   }
+      // );
+      
+      // Make a POST request to your server
+      const url = productId
+        ? `http://localhost:4000/api/products/${productId}`
+        : "http://localhost:4000/api/products";
+
+      const response = await fetch(url, {
+        method: productId ? "PUT" : "POST",
+        body: formData,
+      });
+
+      // Check if the request was successful
+      if (!response.ok) {
+        throw new Error("Failed to submit form data");
+      }
+
+      // Reset form fields after successful submission
+      setName("");
+      setPrice("");
+      setModel("");
+      setLocation("");
+      setCategory("");
+      setIsFeatured(false);
+      setDescription("");
+      setDescriptionList([]);
+      setImageFile(null);
+    } catch (error) {
+      console.error("Error submitting form data:", error);
+    }
   };
 
   const CategoryEnum = ["None", "Premium", "Featured", "Classic"];
@@ -108,7 +139,7 @@ export default function Overview() {
             <FormLabel>Product Name</FormLabel>
             <Input
               type="text"
-              value={productId ? name : ""}
+              value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </FormControl>
@@ -116,7 +147,7 @@ export default function Overview() {
             <FormLabel>Price</FormLabel>
             <Input
               type="number"
-              value={productId ? price : ""}
+              value={price}
               onChange={(e) => setPrice(e.target.value)}
             />
           </FormControl>
@@ -124,7 +155,7 @@ export default function Overview() {
             <FormLabel>Model</FormLabel>
             <Input
               type="text"
-              value={productId ? model : ""}
+              value={model}
               onChange={(e) => setModel(e.target.value)}
             />
           </FormControl>
@@ -132,14 +163,14 @@ export default function Overview() {
             <FormLabel>Location</FormLabel>
             <Input
               type="text"
-              value={productId ? location : ""}
+              value={location}
               onChange={(e) => setLocation(e.target.value)}
             />
           </FormControl>
           <FormControl>
             <FormLabel>Category</FormLabel>
             <Select
-              value={productId ? category : ""}
+              value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
               {CategoryEnum.map((cat) => (
@@ -152,7 +183,7 @@ export default function Overview() {
           <FormControl>
             <FormLabel>Is Featured</FormLabel>
             <Checkbox
-              isChecked={productId ? isFeatured : false}
+              isChecked={isFeatured}
               onChange={(e) => setIsFeatured(e.target.checked)}
             >
               Featured
