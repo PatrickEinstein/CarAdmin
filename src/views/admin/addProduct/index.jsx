@@ -9,7 +9,7 @@ import {
   Checkbox,
   Button,
 } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 
 export default function Overview() {
   const { id: productId } = useParams();
@@ -22,6 +22,7 @@ export default function Overview() {
   const [description, setDescription] = useState("");
   const [descriptionList, setDescriptionList] = useState([]);
   const [imageFile, setImageFile] = useState(null); // New state for image file
+  const history = useHistory();
 
   useEffect(() => {
     if (productId) {
@@ -84,15 +85,6 @@ export default function Overview() {
     formData.append("imageFile", imageFile);
 
     try {
-      // // Make a POST request to your server
-      // const response = await fetch(
-      //   `http://localhost:4000/api/products/${productId ? productId : ""}`,
-      //   {
-      //     method: productId ? "PUT" : "POST",
-      //     body: formData,
-      //   }
-      // );
-      
       // Make a POST request to your server
       const url = productId
         ? `http://localhost:4000/api/products/${productId}`
@@ -118,6 +110,8 @@ export default function Overview() {
       setDescription("");
       setDescriptionList([]);
       setImageFile(null);
+
+      history.push("/admin/products")
     } catch (error) {
       console.error("Error submitting form data:", error);
     }
