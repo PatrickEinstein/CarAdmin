@@ -35,14 +35,31 @@ function Register() {
     phoneNumber: "",
     password: "",
     confirmPassword: "",
+    profilePicture: File,
   });
 
-  const { firstName, lastName, email, phoneNumber, password, confirmPassword } =
-    formData;
+  const {
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    password,
+    confirmPassword,
+    profilePicture,
+  } = formData;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const data = new FormData();
+
+  data.append("firstName", firstName);
+  data.append("lastName", lastName);
+  data.append("email", email);
+  data.append("phoneNumber", phoneNumber);
+  data.append("password", password);
+  data.append("profilePicture", profilePicture);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -50,22 +67,14 @@ function Register() {
       alert("Passwords do not match");
       return;
     }
-
     const requestOptions = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        firstName,
-        lastName,
-        email,
-        phoneNumber,
-        password,
-      }),
+      body: data,
     };
 
     try {
       const response = await fetch(
-        "http://localhost:4000/api/auth/register",
+        "http://localhost:4200/api/register",
         requestOptions
       );
 
@@ -131,6 +140,7 @@ function Register() {
                 First Name
               </FormLabel>
               <Input
+                id="firstName"
                 isRequired
                 fontSize="sm"
                 placeholder="Enter your first name"
@@ -139,7 +149,7 @@ function Register() {
                 variant="auth"
                 name="firstName"
                 value={firstName}
-                onChange={handleChange}
+                onChange={(e) => handleChange(e)}
               />
               <FormLabel
                 ms="4px"
@@ -151,6 +161,7 @@ function Register() {
                 Last Name
               </FormLabel>
               <Input
+                id="lastName"
                 isRequired
                 fontSize="sm"
                 placeholder="Enter your last name"
@@ -159,7 +170,7 @@ function Register() {
                 variant="auth"
                 name="lastName"
                 value={lastName}
-                onChange={handleChange}
+                onChange={(e) => handleChange(e)}
               />
               <FormLabel
                 ms="4px"
@@ -171,6 +182,7 @@ function Register() {
                 Email
               </FormLabel>
               <Input
+                id="email"
                 isRequired
                 fontSize="sm"
                 placeholder="Enter your email"
@@ -180,7 +192,7 @@ function Register() {
                 type="email"
                 name="email"
                 value={email}
-                onChange={handleChange}
+                onChange={(e) => handleChange(e)}
               />
               <FormLabel
                 ms="4px"
@@ -192,6 +204,7 @@ function Register() {
                 Phone Number
               </FormLabel>
               <Input
+                id="phoneNumber"
                 isRequired
                 fontSize="sm"
                 placeholder="Enter your phone number"
@@ -201,7 +214,7 @@ function Register() {
                 type="tel"
                 name="phoneNumber"
                 value={phoneNumber}
-                onChange={handleChange}
+                onChange={(e) => handleChange(e)}
               />
               <FormLabel
                 ms="4px"
@@ -214,6 +227,7 @@ function Register() {
               </FormLabel>
               <InputGroup size="md">
                 <Input
+                  id="password"
                   isRequired
                   fontSize="sm"
                   placeholder="Min. 8 characters"
@@ -223,7 +237,7 @@ function Register() {
                   variant="auth"
                   name="password"
                   value={password}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange(e)}
                 />
                 <InputRightElement display="flex" alignItems="center" mt="4px">
                   <Icon
@@ -253,7 +267,29 @@ function Register() {
                 variant="auth"
                 name="confirmPassword"
                 value={confirmPassword}
-                onChange={handleChange}
+                onChange={(e) => handleChange(e)}
+              />
+              <FormLabel
+                ms="4px"
+                fontSize="sm"
+                fontWeight="500"
+                color={textColor}
+                display="flex"
+              >
+                Display Picture
+              </FormLabel>
+              <Input
+                id="profileImage"
+                isRequired
+                fontSize="sm"
+                placeholder="Add a picture"
+                mb="24px"
+                size="lg"
+                type="file"
+                variant="auth"
+                name="profilePicture"
+                value={profilePicture}
+                onChange={(e) => handleChange(e)}
               />
               <Button
                 type="submit"

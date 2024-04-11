@@ -57,10 +57,15 @@ export default function Overview() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/users")
+    const token = localStorage.getItem('token');
+    fetch("http://localhost:4200/api/allUser/1/1000",{
+      headers:{
+        "Authorization": `Bearer ${token}`
+      }
+    })
       .then((response) => response.json())
       .then((data) => {
-        const users = data.responseData.usersList;
+        const users = data.messae;
 
         const tableData = users.map((user) => ({
           firstName: user.firstName,

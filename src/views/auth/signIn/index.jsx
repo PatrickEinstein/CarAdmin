@@ -66,7 +66,7 @@ function SignIn() {
 
     try {
       const response = await fetch(
-        "http://localhost:4000/api/auth/login",
+        "http://localhost:4200/api/login",
         requestOptions
       );
 

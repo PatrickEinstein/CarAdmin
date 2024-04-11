@@ -57,10 +57,15 @@ export default function Overview() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/products")
+    const token = localStorage.getItem("token");
+    fetch("http://localhost:4200/api/allProducts/1/1000", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
-        const products = data.responseData.products;
+        const products = data.message;
 
         const tableData = products.map((product) => ({
           name: product.name,
@@ -84,7 +89,6 @@ export default function Overview() {
         }));
         setProducts(tableData);
         setLoading(false);
-
       })
       .catch((error) => {
         console.error("Error fetching users:", error);
@@ -108,7 +112,6 @@ export default function Overview() {
   const handleView = (product) => {
     setSelectedProduct(product);
     // setIsPopupOpen(true);
-
     history.push(`/admin/product/${product._id}`);
   };
 
@@ -157,7 +160,6 @@ export default function Overview() {
           Add Product
         </Button>
       </SimpleGrid>
-
 
       <ComplexTable
         tableHeading="Products"

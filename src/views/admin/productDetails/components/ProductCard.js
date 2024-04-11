@@ -3,13 +3,12 @@ import { Box, Heading, Text, Divider, Image, Flex } from "@chakra-ui/react";
 
 const ProductCard = ({ product }) => {
   return (
-    <Box bg="white" p={4} boxShadow="md" borderRadius="md">
+    <Box  p={4} boxShadow="md" borderRadius="md">
       <Heading size="md">{product.name}</Heading>
       <Divider my={2} />
       <Flex alignItems="center">
-        {/* Image takes 50% width */}
         <Image
-          src={product.productImages[0]?.url}
+          src={product.Image}
           alt={product.name}
           boxSize="50%"
           objectFit="cover"

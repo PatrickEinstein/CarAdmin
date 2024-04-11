@@ -10,8 +10,10 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom/cjs/react-router-dom";
 
 export default function Overview() {
+  const history = useHistory();
   const product = useParams();
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -23,10 +25,15 @@ export default function Overview() {
   const [descriptionList, setDescriptionList] = useState([]);
   const [imageFile, setImageFile] = useState(null); // New state for image file
 
+  const token = localStorage.getItem("token");
   const productId = product.id;
   useEffect(() => {
     if (productId) {
-      fetch(`http://localhost:4000/api/products/${productId}`)
+      fetch(`http://localhost:4200/api/get/product/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
         .then((response) => {
           if (!response.ok) {
             throw new Error("Failed to fetch product details");
@@ -34,7 +41,7 @@ export default function Overview() {
           return response.json();
         })
         .then((data) => {
-          const product = data.responseData;
+          const product = data.message;
           setName(product.name);
           setPrice(product.price);
           setModel(product.model);
@@ -68,7 +75,7 @@ export default function Overview() {
     setImageFile(file);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newProduct = {
       name,
@@ -80,6 +87,23 @@ export default function Overview() {
       description: descriptionList,
       imageFile, // Include image file in the new product object
     };
+
+    const onHandleEdit = await fetch(
+      `http://localhost:4200/update/product/${productId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newProduct),
+      }
+    );
+    const res = await onHandleEdit.json();
+    console.log(res);
+    if (res.success) {
+      history.push(`/admin/product/${product._id}`);
+    }
+
     // Reset form fields
     setName("");
     setPrice("");
