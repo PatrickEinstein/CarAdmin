@@ -3,7 +3,7 @@ import { Box, Heading, Text, Divider, Image, Flex, Switch } from "@chakra-ui/rea
 
 const UserCard = ({ user, onToggleActivation }) => {
   return (
-    <Box bg="white" p={4} boxShadow="md" borderRadius="md">
+    <Box  p={4} boxShadow="md" borderRadius="md" justifyContent="space-around" alignItems="center">
       <Heading size="md">{`${user.firstName} ${user.lastName}`}</Heading>
       <Divider my={2} />
       <Flex alignItems="center">

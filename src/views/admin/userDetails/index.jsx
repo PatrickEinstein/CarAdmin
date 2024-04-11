@@ -4,35 +4,41 @@ import { Box, Button } from "@chakra-ui/react";
 import UserCard from "views/admin/userDetails/components/UserCard";
 
 const UserDetails = () => {
-  const { id } = useParams();   
-  const [user, setUser] = useState(null);   
+  const { id } = useParams();
+  const [user, setUser] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
   const history = useHistory();
+  const token = localStorage.getItem("token");
 
-  useEffect(() => {    
-    fetch(`http://localhost:4000/api/users/${id}`)
+  useEffect(() => {
+    fetch(`http://localhost:4200/api/get/user/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => response.json())
-      .then((data) => {        
-        setUser(data.responseData);
+      .then((data) => {
+        setUser(data.message);
       })
       .catch((error) => {
         console.error("Error fetching user details:", error);
       });
-  }, [id]);   
+  }, [id]);
 
   const handleSave = (userToUpdate) => {
-    setIsSaving(true);            
+    setIsSaving(true);
     fetch(`http://localhost:4000/api/users/activate/${userToUpdate._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ isActive: userToUpdate.isActive }),
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.status) {          
+        if (data.status) {
           setUser(userToUpdate);
           history.push("/admin/users");
         } else {

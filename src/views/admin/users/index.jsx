@@ -65,7 +65,7 @@ export default function Overview() {
     })
       .then((response) => response.json())
       .then((data) => {
-        const users = data.messae;
+        const users = data.message;
 
         const tableData = users.map((user) => ({
           firstName: user.firstName,

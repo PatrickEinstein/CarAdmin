@@ -17,7 +17,7 @@ const ProductCard = ({ product }) => {
         <Box flex="1">
           {" "}
           {/* Takes remaining 50% width */}
-          <Text fontWeight="bold">Price: ${product.price.toFixed(2)}</Text>
+          <Text fontWeight="bold">Price: ${product?.price?.toFixed(2)}</Text>
           <Text>Model: {product.model}</Text>
           <Text>Location: {product.location}</Text>
           <Text>Description:</Text>

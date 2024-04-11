@@ -10,7 +10,10 @@ import {
   Th,
   Thead,
   Tr,
+  Box,
   useColorModeValue,
+  IconButton,
+  Button,
 } from "@chakra-ui/react";
 import {
   useGlobalFilter,
@@ -20,7 +23,9 @@ import {
 } from "react-table";
 import Card from "components/card/Card";
 import Menu from "components/menu/MainMenu";
-import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
+import { MdCheckCircle, MdCancel } from "react-icons/md";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+
 
 export default function ColumnsTable(props) {
   const { tableHeading, columnsData, tableData } = props;
@@ -28,8 +33,8 @@ export default function ColumnsTable(props) {
   const columns = useMemo(() => {
     return columnsData.map((column) => ({
       Header: column.header,
-      accessor: column.key, // Use the 'key' property as the accessor
-      cellType: column.cellType, // Assuming you have a 'cellType' property for each column
+      accessor: column.key,
+      cellType: column.cellType,
     }));
   }, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
@@ -38,6 +43,7 @@ export default function ColumnsTable(props) {
     {
       columns,
       data,
+      initialState: { pageSize: 5 },
     },
     useGlobalFilter,
     useSortBy,
@@ -50,9 +56,15 @@ export default function ColumnsTable(props) {
     headerGroups,
     page,
     prepareRow,
-    initialState,
+    state,
+    nextPage,
+    previousPage,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
   } = tableInstance;
-  initialState.pageSize = 5;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -107,7 +119,6 @@ export default function ColumnsTable(props) {
                 {row.cells.map((cell, cellIndex) => {
                   let data = cell.value;
                   const column = cell.column;
-                  // Dynamically render cell content based on column type
                   if (column.cellType === "text") {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
@@ -161,7 +172,55 @@ export default function ColumnsTable(props) {
           })}
         </Tbody>
       </Table>
+      {/* Pagination */}
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        alignItems="center"
+        mr="25px" // Adjust margin to position it properly
+        mb="15px" // Adjust margin to position it properly
+      >
+        <Button
+          size="sm"
+          colorScheme="blue"
+          mr="2"
+          onClick={() => previousPage()}
+          disabled={!canPreviousPage}
+        >
+          <ChevronLeftIcon />
+        </Button>
+        <Button
+          size="sm"
+          colorScheme="blue"
+          mr="2"
+          onClick={() => nextPage()}
+          disabled={!canNextPage}
+        >
+          <ChevronRightIcon />
+        </Button>
+        <Text color={textColor} fontSize="sm" mr="2">
+          Page{" "}
+          <strong>
+            {state.pageIndex + 1} of {pageOptions.length}
+          </strong>{" "}
+        </Text>
+        <Button
+          size="sm"
+          colorScheme="blue"
+          onClick={() => gotoPage(0)}
+          disabled={state.pageIndex === 0}
+        >
+          {"<<"}
+        </Button>
+        <Button
+          size="sm"
+          colorScheme="blue"
+          onClick={() => gotoPage(state.pageCount - 1)}
+          disabled={state.pageIndex === state.pageCount - 1}
+        >
+          {">>"}
+        </Button>
+      </Box>
     </Card>
   );
 }
-

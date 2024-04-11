@@ -70,50 +70,56 @@ export default function Overview() {
   };
 
   const handleFileChange = (e) => {
-    // Get the selected file from input
     const file = e.target.files[0];
     setImageFile(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newProduct = {
-      name,
-      price,
-      model,
-      location,
-      category,
-      isFeatured,
-      description: descriptionList,
-      imageFile, // Include image file in the new product object
-    };
 
-    const onHandleEdit = await fetch(
-      `http://localhost:4200/update/product/${productId}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(newProduct),
-      }
-    );
-    const res = await onHandleEdit.json();
-    console.log(res);
-    if (res.success) {
-      history.push(`/admin/product/${product._id}`);
+    const data = new FormData();
+    data.append("name", name);
+    data.append("location", location);
+    data.append("description", descriptionList);
+    data.append("price", price);
+    data.append("category", category);
+    data.append("Image", imageFile);
+    data.append("createdBy", "User");
+    // data.append("name", name);
+
+    let url;
+    let method;
+
+    if (window.location.href.split("/admin")[1] === "/add-product") {
+      url = "http://localhost:4200/api/create/products";
+      method = "POST";
+    } else {
+      url = `http://localhost:4200/update/product/${productId}`;
+      method = "PATCH";
     }
 
-    // Reset form fields
-    setName("");
-    setPrice("");
-    setModel("");
-    setLocation("");
-    setCategory("");
-    setIsFeatured(false);
-    setDescription("");
-    setDescriptionList([]);
-    setImageFile(null);
+    const onHandleEdit = await fetch(url, {
+      method: method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: data,
+    });
+    const res = await onHandleEdit.json();
+    // console.log(res);
+    if (res.status) {
+      history.push(`/admin/product/${productId ?? res.id}`);
+      // Reset form fields
+      setName("");
+      setPrice("");
+      setModel("");
+      setLocation("");
+      setCategory("");
+      setIsFeatured(false);
+      setDescription("");
+      setDescriptionList([]);
+      setImageFile(null);
+    }
   };
 
   const CategoryEnum = ["None", "Premium", "Featured", "Classic"];
@@ -132,7 +138,8 @@ export default function Overview() {
             <FormLabel>Product Name</FormLabel>
             <Input
               type="text"
-              value={productId ? name : ""}
+              // value={productId ? name : ""}
+              defaultValue={productId ? name : ""}
               onChange={(e) => setName(e.target.value)}
             />
           </FormControl>
@@ -140,7 +147,8 @@ export default function Overview() {
             <FormLabel>Price</FormLabel>
             <Input
               type="number"
-              value={productId ? price : ""}
+              // value={productId ? price : ""}
+              defaultValue={productId ? price : ""}
               onChange={(e) => setPrice(e.target.value)}
             />
           </FormControl>
@@ -148,7 +156,8 @@ export default function Overview() {
             <FormLabel>Model</FormLabel>
             <Input
               type="text"
-              value={productId ? model : ""}
+              // value={productId ? model : ""}
+              defaultValue={productId ? model : ""}
               onChange={(e) => setModel(e.target.value)}
             />
           </FormControl>
@@ -156,14 +165,16 @@ export default function Overview() {
             <FormLabel>Location</FormLabel>
             <Input
               type="text"
-              value={productId ? location : ""}
+              // value={productId ? location : ""}
+              defaultValue={productId ? location : ""}
               onChange={(e) => setLocation(e.target.value)}
             />
           </FormControl>
           <FormControl>
             <FormLabel>Category</FormLabel>
             <Select
-              value={productId ? category : ""}
+              // value={productId ? category : ""}
+              defaultValue={productId ? category : ""}
               onChange={(e) => setCategory(e.target.value)}
             >
               {CategoryEnum.map((cat) => (

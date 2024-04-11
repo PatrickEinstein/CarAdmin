@@ -51,7 +51,7 @@ export default function Overview() {
           pb={{ base: "100px", lg: "20px" }}
         />
       </Grid>
-      <Grid
+      {/* <Grid
         mb="20px"
         templateColumns={{
           base: "1fr",
@@ -89,7 +89,7 @@ export default function Overview() {
             "2xl": "1 / 3 / 2 / 4",
           }}
         />
-      </Grid>
+      </Grid> */}
     </Box>
   );
 }
